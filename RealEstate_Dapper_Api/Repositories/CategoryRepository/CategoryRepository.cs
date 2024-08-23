@@ -21,7 +21,7 @@ namespace RealEstate_Dapper_Api.Repositories.CategoryRepository
             paremeters.Add("@categoryStatus", true);
             using (var con = _context.CreateConnection())
             {
-                await con.ExecuteAsync(query,paremeters);
+                await con.ExecuteAsync(query, paremeters);
             }
 
         }
@@ -30,7 +30,7 @@ namespace RealEstate_Dapper_Api.Repositories.CategoryRepository
         {
             string query = "Delete From Category Where CategoryID=@categoryID";
             var paremeters = new DynamicParameters();
-            paremeters.Add("@categoryID", id); 
+            paremeters.Add("@categoryID", id);
             using (var con = _context.CreateConnection())
             {
                 await con.ExecuteAsync(query, paremeters);
@@ -44,6 +44,19 @@ namespace RealEstate_Dapper_Api.Repositories.CategoryRepository
             {
                 var values = await connection.QueryAsync<ResultCategoryDto>(query);
                 return values.ToList();
+            }
+        }
+
+        public async Task<GetByIdCategoryDto> GetByIdCategoryAsync(int id)
+        {
+            string query = "Select * From Category Where CategoryID=@categoryId";
+            var param = new DynamicParameters();
+            param.Add("@categoryId", id);
+
+            using (var con = _context.CreateConnection())
+            {
+                var values = await con.QueryFirstOrDefaultAsync<GetByIdCategoryDto>(query, param);
+                return values;
             }
         }
 
