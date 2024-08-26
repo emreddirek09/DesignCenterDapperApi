@@ -10,6 +10,8 @@ builder.Services.AddTransient<Context>();
 builder.Services.AddTransient<ICategoryRepository,CategoryRepository>();
 builder.Services.AddTransient<IProductRepository,ProductRespository>();
 builder.Services.AddTransient<IWhoWEAreDetailRespository, WhoWEAreDetailRespository>();
+
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
