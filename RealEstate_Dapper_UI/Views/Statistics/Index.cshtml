@@ -1,0 +1,26 @@
+﻿@model RealEstate_Dapper_UI.Models.StatisticResponseValue
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Admin/Index.cshtml";
+}
+
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        @foreach (var item in Model.pairs)
+        {
+            <div class="col-sm-6 col-xl-3">
+                <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                    <div class="ms-3" style="height:100px;width:125px;">
+                        <p class="mb-2">@item.Key</p>
+                        <h6 class="mb-0">@item.Value</h6>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+ 
+
+
+

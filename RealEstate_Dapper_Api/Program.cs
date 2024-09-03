@@ -5,6 +5,7 @@ using RealEstate_Dapper_Api.Repositories.EmployeeRepositories;
 using RealEstate_Dapper_Api.Repositories.PopularLocationRepositories;
 using RealEstate_Dapper_Api.Repositories.ProductRepository;
 using RealEstate_Dapper_Api.Repositories.ServiceRespository;
+using RealEstate_Dapper_Api.Repositories.StatisticsRepositories;
 using RealEstate_Dapper_Api.Repositories.TestimonialRespositories;
 using RealEstate_Dapper_Api.Repositories.WhoWEAreRespository;
 
@@ -20,6 +21,7 @@ builder.Services.AddTransient<IBottomGridRepository,BottomGridRepository>();
 builder.Services.AddTransient<IPopularLocationRespository,PopularLocationRespository>();
 builder.Services.AddTransient<ITestimonialRespository,TestimonialRespository>();
 builder.Services.AddTransient<IEmployeeRepository,EmployeeRepository>();
+builder.Services.AddTransient<IStatisticsRepository,StatisticsRepository>();
 
 
 builder.Services.AddControllers();
