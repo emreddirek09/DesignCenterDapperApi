@@ -7,7 +7,7 @@ namespace RealEstate_Dapper_UI.Controllers
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
-        private string _titleUrl = @"https://localhost:44319/api/Statistics/";
+        private string _baseUrl = @"https://localhost:44319/api/Statistics/";
 
         public StatisticsController(IHttpClientFactory httpClientFactory)
         {
@@ -24,7 +24,7 @@ namespace RealEstate_Dapper_UI.Controllers
 
             for (int i = 0; i < _name.namesEng.Count(); i++)
             {
-                var response = await client.GetAsync(_titleUrl + _name.namesEng[i]);
+                var response = await client.GetAsync(_baseUrl + _name.namesEng[i]);
                 var jsonData = await response.Content.ReadAsStringAsync();
                 _valueName.pairs.Add(_name.namesTr[i], jsonData);
             }
