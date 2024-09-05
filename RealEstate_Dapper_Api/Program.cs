@@ -1,5 +1,6 @@
+using RealEstate_Dapper_Api.Hubs;
 using RealEstate_Dapper_Api.Models.DapperContext;
-using RealEstate_Dapper_Api.Repositories.BottomGridRepositories; 
+using RealEstate_Dapper_Api.Repositories.BottomGridRepositories;
 using RealEstate_Dapper_Api.Repositories.CategoryRepository;
 using RealEstate_Dapper_Api.Repositories.ContactRepositories;
 using RealEstate_Dapper_Api.Repositories.EmployeeRepositories;
@@ -11,22 +12,35 @@ using RealEstate_Dapper_Api.Repositories.TestimonialRespositories;
 using RealEstate_Dapper_Api.Repositories.ToDoListRepositories;
 using RealEstate_Dapper_Api.Repositories.WhoWEAreRespository;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddTransient<Context>();
-builder.Services.AddTransient<ICategoryRepository,CategoryRepository>();
-builder.Services.AddTransient<IProductRepository,ProductRespository>();
+builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
+builder.Services.AddTransient<IProductRepository, ProductRespository>();
 builder.Services.AddTransient<IWhoWEAreDetailRespository, WhoWEAreDetailRespository>();
-builder.Services.AddTransient<IServiceRepository,ServiceRepository>();
-builder.Services.AddTransient<IBottomGridRepository,BottomGridRepository>();
-builder.Services.AddTransient<IPopularLocationRespository,PopularLocationRespository>();
-builder.Services.AddTransient<ITestimonialRespository,TestimonialRespository>();
-builder.Services.AddTransient<IEmployeeRepository,EmployeeRepository>();
-builder.Services.AddTransient<IStatisticsRepository,StatisticsRepository>(); 
-builder.Services.AddTransient<IContactRepository,ContactRepository>(); 
-builder.Services.AddTransient<IToDoListRepository,ToDoListRepository>(); 
+builder.Services.AddTransient<IServiceRepository, ServiceRepository>();
+builder.Services.AddTransient<IBottomGridRepository, BottomGridRepository>();
+builder.Services.AddTransient<IPopularLocationRespository, PopularLocationRespository>();
+builder.Services.AddTransient<ITestimonialRespository, TestimonialRespository>();
+builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddTransient<IStatisticsRepository, StatisticsRepository>();
+builder.Services.AddTransient<IContactRepository, ContactRepository>();
+builder.Services.AddTransient<IToDoListRepository, ToDoListRepository>();
 
+
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy("CorsPolicyDirek", builder =>
+    {
+        builder.AllowAnyHeader()
+                .AllowAnyMethod()
+                .SetIsOriginAllowed((host) => true)
+                .AllowCredentials();
+    });
+});
+builder.Services.AddSignalR();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -42,10 +56,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("CorsPolicyDirek");
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
 
+app.MapHub<SignalRHub>("/signalrhub");
+
 app.Run();
+ 
