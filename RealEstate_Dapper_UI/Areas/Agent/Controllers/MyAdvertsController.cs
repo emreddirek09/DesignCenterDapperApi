@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RealEstate_Dapper_UI.Dtos.ProductDtos;
+using RealEstate_Dapper_UI.Services;
 
 namespace RealEstate_Dapper_UI.Areas.Agent.Controllers
 {
@@ -8,17 +9,20 @@ namespace RealEstate_Dapper_UI.Areas.Agent.Controllers
     public class MyAdvertsController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILoginService _loginService;
 
-        public MyAdvertsController(IHttpClientFactory httpClientFactory)
+        private readonly string _baseUrl = @"https://localhost:44319/api/";
+
+        public MyAdvertsController(IHttpClientFactory httpClientFactory, ILoginService loginService)
         {
             _httpClientFactory = httpClientFactory;
+            _loginService = loginService;
         }
 
-        private string _baseUrl = @"https://localhost:44319/api/";
-
-        public async Task<IActionResult> Index(int id)
+        public async Task<IActionResult> Index()
         {
-            id = 1;
+            var id = _loginService.GetUserId;
+
             var client = _httpClientFactory.CreateClient();
             var responeseMessage = await client.GetAsync(_baseUrl + $"ProductControllers/ProductAdvertsListByEmployee/{id}");
 
