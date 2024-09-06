@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RealEstate_Dapper_UI.Dtos.EmployeeDtos;
 using System.Text;
 
 namespace RealEstate_Dapper_UI.Controllers
 {
+    [Authorize]
     public class EmployeeController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -16,14 +18,19 @@ namespace RealEstate_Dapper_UI.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responeseMessage = await client.GetAsync("https://localhost:44319/api/Employees");
-
-            if (responeseMessage.IsSuccessStatusCode)
+            var token = User.Claims.FirstOrDefault(x => x.Type == "desingtoken")?.Value;
+            if (token != null)
             {
-                var jsonData = await responeseMessage.Content.ReadAsStringAsync();
-                var values = JsonConvert.DeserializeObject<List<ResultEmployeeDto>>(jsonData);
-                return View(values);
+
+                var client = _httpClientFactory.CreateClient();
+                var responeseMessage = await client.GetAsync("https://localhost:44319/api/Employees");
+
+                if (responeseMessage.IsSuccessStatusCode)
+                {
+                    var jsonData = await responeseMessage.Content.ReadAsStringAsync();
+                    var values = JsonConvert.DeserializeObject<List<ResultEmployeeDto>>(jsonData);
+                    return View(values);
+                }
             }
 
             return View();
@@ -31,7 +38,7 @@ namespace RealEstate_Dapper_UI.Controllers
         [HttpGet]
         public IActionResult CreateEmployee() { return View(); }
 
-        [HttpPost] 
+        [HttpPost]
 
         public async Task<IActionResult> CreateEmployee(CreateEmployeeDto createEmployeeDto)
         {
