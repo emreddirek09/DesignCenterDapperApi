@@ -256,4 +256,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Agent\Data\" />
+    <Folder Include="Areas\Agent\Models\" />
+  </ItemGroup>
+
 </Project>
