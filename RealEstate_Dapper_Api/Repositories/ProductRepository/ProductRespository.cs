@@ -26,10 +26,24 @@ namespace RealEstate_Dapper_Api.Repositories.ProductRepository
         public async Task<List<ResultProductWithCategoryDto>> GetLast5ProductAsync()
         {
             string query = @"Select top 5 ProductID,Title,Price,City,Disctrict,CategoryName,CoverImage,Address,Type,DealOfTheDay,Date from Product 
-                               inner join Category on Product.ProductCategory=Category.CategoryID order by ProductID desc"; 
+                               inner join Category on Product.ProductCategory=Category.CategoryID order by ProductID desc";
             using (var con = _context.CreateConnection())
             {
                 var values = await con.QueryAsync<ResultProductWithCategoryDto>(query);
+                return values.ToList();
+            }
+        }
+
+        public async Task<List<ResultProductAdvertListWithCategoryByEmployeeDto>> GetProductAdvertListByEmployeeAsync(int id)
+        {
+            string query = @"Select * From Product inner join Category on 
+                            Product.ProductCategory=Category.CategoryID  where EmployeeID=@employeeID
+                            order by ProductID desc";
+            var paremeters = new DynamicParameters(); 
+            paremeters.Add("@employeeID", id);
+            using (var con = _context.CreateConnection())
+            {
+                var values = await con.QueryAsync<ResultProductAdvertListWithCategoryByEmployeeDto>(query, paremeters);
                 return values.ToList();
             }
         }
@@ -49,8 +63,8 @@ namespace RealEstate_Dapper_Api.Repositories.ProductRepository
         {
             string query = "update Product Set DealOfTheDay=@dealOfTheDay Where ProductID=@productID";
 
-            var paremeters = new DynamicParameters(); 
-            paremeters.Add("@dealOfTheDay",false);
+            var paremeters = new DynamicParameters();
+            paremeters.Add("@dealOfTheDay", false);
             paremeters.Add("@productID", id);
 
             using (var con = _context.CreateConnection())

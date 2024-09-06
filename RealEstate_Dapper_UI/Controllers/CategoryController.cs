@@ -14,10 +14,12 @@ namespace RealEstate_Dapper_UI.Controllers
             _httpClientFactory = httpClientFactory;
         }
 
+        private string _baseUrl = @"https://localhost:44319/api/";
+
         public async Task<IActionResult> Index()
         {
             var client = _httpClientFactory.CreateClient();
-            var responeseMessage = await client.GetAsync("https://localhost:44319/api/Categories");
+            var responeseMessage = await client.GetAsync(_baseUrl+"Categories");
 
             if (responeseMessage.IsSuccessStatusCode)
             {
@@ -38,7 +40,7 @@ namespace RealEstate_Dapper_UI.Controllers
             var client = _httpClientFactory.CreateClient();
             var jasonData = JsonConvert.SerializeObject(createCategoryDto);
             StringContent stringContent = new StringContent(jasonData, Encoding.UTF8, "application/json");
-            var responseMessage = await client.PostAsync("https://localhost:44319/api/Categories", stringContent);
+            var responseMessage = await client.PostAsync(_baseUrl+"Categories", stringContent);
             if (responseMessage.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index");
@@ -51,7 +53,7 @@ namespace RealEstate_Dapper_UI.Controllers
         public async Task<IActionResult> DeleteCategory(int id)
         {
             var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.DeleteAsync($"https://localhost:44319/api/Categories/{id}");
+            var responseMessage = await client.DeleteAsync(_baseUrl+ $"Categories/{id}");
             if (responseMessage.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index");
@@ -80,7 +82,7 @@ namespace RealEstate_Dapper_UI.Controllers
             var client = _httpClientFactory.CreateClient();
             var json = JsonConvert.SerializeObject(updateCategoryDto);
             StringContent content = new StringContent(json,Encoding.UTF8,"application/json");
-            var response = await client.PutAsync("https://localhost:44319/api/Categories/",content);
+            var response = await client.PutAsync(_baseUrl+"Categories/",content);
             if (response.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index");
