@@ -13,6 +13,29 @@ namespace RealEstate_Dapper_Api.Repositories.ProductRepository
             _context = context;
         }
 
+        public async Task CreateProduct(CreateProductDto createProductDto)
+        {
+            string query = "insert into Product(Title,Price,City,Disctrict,CoverImage,Address,Description,ProductCategory,EmployeeID,Type,DealOfTheDay,Date,ProductStatus) Values (@title,@price,@city,@disctrict,@coverImage,@address,@description,@productCategory,@employeeID,@type,@dealOfTheDay,@date,@productStatus)";
+            var paremeters = new DynamicParameters(); 
+            paremeters.Add("@title", createProductDto.Title);
+            paremeters.Add("@price", createProductDto.Price);
+            paremeters.Add("@city", createProductDto.City);
+            paremeters.Add("@disctrict", createProductDto.Disctrict);
+            paremeters.Add("@coverImage", createProductDto.CoverImage);
+            paremeters.Add("@address", createProductDto.Addresss);
+            paremeters.Add("@description", createProductDto.Description);
+            paremeters.Add("@productCategory", createProductDto.ProductCategory);
+            paremeters.Add("@employeeID", createProductDto.EmployeeID);
+            paremeters.Add("@dealOfTheDay", createProductDto.DealOfTheDay);
+            paremeters.Add("@date", createProductDto.Date);             
+            paremeters.Add("@productStatus", createProductDto.ProductStatus);
+            paremeters.Add("@type", createProductDto.Type);
+            using (var con = _context.CreateConnection())
+            {
+                await con.ExecuteAsync(query, paremeters);
+            }
+        }
+
         public async Task<List<ResultProductDto>> GetAllProductAsync()
         {
             string query = "Select * from Product";
@@ -34,12 +57,26 @@ namespace RealEstate_Dapper_Api.Repositories.ProductRepository
             }
         }
 
-        public async Task<List<ResultProductAdvertListWithCategoryByEmployeeDto>> GetProductAdvertListByEmployeeAsync(int id)
+        public async Task<List<ResultProductAdvertListWithCategoryByEmployeeDto>> GetProductAdvertListByEmployeeAsyncByFalse(int id)
         {
             string query = @"Select * From Product inner join Category on 
-                            Product.ProductCategory=Category.CategoryID  where EmployeeID=@employeeID
+                            Product.ProductCategory=Category.CategoryID  where EmployeeID=@employeeID and ProductStatus=0
                             order by ProductID desc";
-            var paremeters = new DynamicParameters(); 
+            var paremeters = new DynamicParameters();
+            paremeters.Add("@employeeID", id);
+            using (var con = _context.CreateConnection())
+            {
+                var values = await con.QueryAsync<ResultProductAdvertListWithCategoryByEmployeeDto>(query, paremeters);
+                return values.ToList();
+            }
+        }
+
+        public async Task<List<ResultProductAdvertListWithCategoryByEmployeeDto>> GetProductAdvertListByEmployeeAsyncByTrue(int id)
+        {
+            string query = @"Select * From Product inner join Category on 
+                            Product.ProductCategory=Category.CategoryID  where EmployeeID=@employeeID and ProductStatus=1
+                            order by ProductID desc";
+            var paremeters = new DynamicParameters();
             paremeters.Add("@employeeID", id);
             using (var con = _context.CreateConnection())
             {

@@ -1,22 +1,26 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RealEstate_Dapper_UI.Services;
 
 namespace RealEstate_Dapper_UI.ViewComponents.Agent
 {
     public class _AgentDashboardStatisticComponenetPartial : ViewComponent
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILoginService _loginService;
 
-        public _AgentDashboardStatisticComponenetPartial(IHttpClientFactory httpClientFactory)
-        {
-            _httpClientFactory = httpClientFactory;
-        }
         private string _baseUrl = @"https://localhost:44319/api/AgentDashboardStatistics/";
 
-        int id = 1;
+
+        public _AgentDashboardStatisticComponenetPartial(IHttpClientFactory httpClientFactory, ILoginService loginService)
+        {
+            _httpClientFactory = httpClientFactory;
+            _loginService = loginService;
+        }
+
         public async Task<IViewComponentResult> InvokeAsync()
         {
             var client = _httpClientFactory.CreateClient();
-
+            var id = _loginService.GetUserId;
             #region ToplamİlanSayısı
             var responseMessage1 = await client.GetAsync(_baseUrl + "AllProductCount");
             var json1 = await responseMessage1.Content.ReadAsStringAsync();

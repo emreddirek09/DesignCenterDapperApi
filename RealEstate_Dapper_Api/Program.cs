@@ -1,10 +1,12 @@
 using RealEstate_Dapper_Api.Hubs;
 using RealEstate_Dapper_Api.Models.DapperContext;
- using RealEstate_Dapper_Api.Repositories.AgentRepositories.DashboardRepositories.StatisticsRepositories;
+using RealEstate_Dapper_Api.Repositories.AgentRepositories.DashboardRepositories.LastProductRepositories;
+using RealEstate_Dapper_Api.Repositories.AgentRepositories.DashboardRepositories.StatisticsRepositories;
 using RealEstate_Dapper_Api.Repositories.BottomGridRepositories;
 using RealEstate_Dapper_Api.Repositories.CategoryRepository;
 using RealEstate_Dapper_Api.Repositories.ContactRepositories;
 using RealEstate_Dapper_Api.Repositories.EmployeeRepositories;
+using RealEstate_Dapper_Api.Repositories.MessageRepositories;
 using RealEstate_Dapper_Api.Repositories.PopularLocationRepositories;
 using RealEstate_Dapper_Api.Repositories.ProductRepository;
 using RealEstate_Dapper_Api.Repositories.ServiceRespository;
@@ -30,7 +32,9 @@ builder.Services.AddTransient<IStatisticsRepository, StatisticsRepository>();
 builder.Services.AddTransient<IContactRepository, ContactRepository>();
 builder.Services.AddTransient<IToDoListRepository, ToDoListRepository>();
 builder.Services.AddTransient<IToDoListRepository, ToDoListRepository>();
-builder.Services.AddScoped<IAgentStatisticsRepository,AgentStatisticsRepository>();
+builder.Services.AddScoped<IAgentStatisticsRepository, AgentStatisticsRepository>();
+builder.Services.AddTransient<ILast5ProductRespository, Last5ProductRespository>();
+builder.Services.AddTransient<IMessageRepository, MessageRepository>();
 
 
 builder.Services.AddCors(opt =>
@@ -72,4 +76,3 @@ app.MapControllers();
 app.MapHub<SignalRHub>("/signalrhub");
 
 app.Run();
- 

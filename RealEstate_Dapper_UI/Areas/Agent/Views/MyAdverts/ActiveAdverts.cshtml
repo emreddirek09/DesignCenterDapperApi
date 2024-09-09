@@ -1,7 +1,7 @@
 ﻿@model List<RealEstate_Dapper_UI.Dtos.ProductDtos.ResultProductAdvertListWithCategoryByEmployeeDto>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Active";
     Layout = "~/Areas/Agent/Views/LayoutAgent/Index.cshtml";
     int count = 0;
 }
@@ -22,6 +22,7 @@
                                 <th scope="col">Fiyat</th>
                                 <th scope="col">Tür</th>
                                 <th scope="col">Sil</th>
+                                <th scope="col">Pasif Yap</th>
                                 <th scope="col">Güncelle</th>
                                 <th scope="col">Sitede Gör</th>
                              </tr>
@@ -37,6 +38,7 @@
                                     <td>@item.price</td>
                                     <td>@item.disctrict</td>
                                     <td> <a href="/Product/DeleteProduct/@item.productID" class="btn btn-outline-danger">Sil</a> </td>
+                                    <td> <a href="/Product/DeleteProduct/@item.productID" class="btn btn-outline-dark">Pasif Yap</a> </td>
                                     <td> <a href="/Product/UpdateProduct/@item.productID" class="btn btn-outline-success">Güncelle</a> </td>
                                     <td> <a href="/Product/ProductDetail/@item.productID" class="btn btn-outline-primary">Sitede Gör</a> </td>
                                     
@@ -44,7 +46,7 @@
                             }
                         </tbody>
                     </table>
-                    <a href="/Product/CreateProduct" class="btn btn-outline-success">Yeni İlan Girişi</a>
+                    <a href="/Agent/MyAdverts/CreateAdvert" class="btn btn-outline-success">Yeni İlan Girişi</a>
                 </div>
             </div>
         </div>
