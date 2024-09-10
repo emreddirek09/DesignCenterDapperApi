@@ -14,13 +14,13 @@ Author URL: http://w3layouts.com
     <!--header-->
     @await Component.InvokeAsync("_NavbarViewCompenentPartial")
     <!--/header-->
-  @*   <section class="w3l-about-breadcrumb">
+    <section class="w3l-about-breadcrumb">
         <div class="breadcrumb-bg breadcrumb-bg-about pt-5">
             <div class="container pt-lg-5 py-3">
             </div>
         </div>
     </section>
-    <section class="w3l-breadcrumb">
+@*     <section class="w3l-breadcrumb">
         <div class="container">
             <ul class="breadcrumbs-custom-path">
                 <li><a href="~/starter/index.html">Home</a></li>
@@ -30,10 +30,9 @@ Author URL: http://w3layouts.com
         </div>
     </section> *@
     <!-- contacts -->
-    @RenderBody() 
+    @RenderBody()
     <!-- //contacts -->
     <!-- footers 20 -->
- 
     @await Component.InvokeAsync("_DefaultFooterComponentPartial")
 
     @await Component.InvokeAsync("_DefaultScriptComponentPartial")
