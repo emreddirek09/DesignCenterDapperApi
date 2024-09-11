@@ -12,7 +12,7 @@ namespace RealEstate_Dapper_Api.Repositories.EmployeeRepositories
         {
             _context = context;
         }
-        public async void CreateEmployee(CreateEmployeeDto createEmployeeDto)
+        public async Task CreateEmployee(CreateEmployeeDto createEmployeeDto)
         {
             string query = "insert into Employee(Name,Title, Mail, PhoneNumber,ImageUrl,Status) Values (@name,@title,@mail,@phoneNumber,@imageUrl,@status)";
             var paremeters = new DynamicParameters();
@@ -28,7 +28,7 @@ namespace RealEstate_Dapper_Api.Repositories.EmployeeRepositories
             }
         }
 
-        public async void DeleteEmployee(int id)
+        public async Task DeleteEmployee(int id)
         {
             string query = "Delete From Employee Where EmployeeID=@employeeID";
             var paremeters = new DynamicParameters();
@@ -39,7 +39,7 @@ namespace RealEstate_Dapper_Api.Repositories.EmployeeRepositories
             }
         }
 
-        public async Task<List<ResultEmployeeDto>> GetAllEmployeeAsync()
+        public async Task<List<ResultEmployeeDto>> GetAllEmployee()
         {
             string query = "Select * From Employee";
             using (var connection = _context.CreateConnection())
@@ -49,7 +49,7 @@ namespace RealEstate_Dapper_Api.Repositories.EmployeeRepositories
             }
         } 
 
-        public async Task<GetByIdEmployeeDto> GetByIdEmployeeAsync(int id)
+        public async Task<GetByIdEmployeeDto> GetByIdEmployee(int id)
         {
             string query = "Select * From Employee Where EmployeeID=@employeeID";
             var param = new DynamicParameters();
@@ -62,7 +62,7 @@ namespace RealEstate_Dapper_Api.Repositories.EmployeeRepositories
             }
         }
 
-        public async void UpdateEmployee(UpdateEmployeeDto updateEmployeeDto)
+        public async Task UpdateEmployee(UpdateEmployeeDto updateEmployeeDto)
         {
             string query = "update Employee Set Name=@name,Title=@title ,Mail=@mail,PhoneNumber=@phoneNumber,ImageUrl=@imageUrl,Status=@status Where EmployeeID=@employeeID";
 

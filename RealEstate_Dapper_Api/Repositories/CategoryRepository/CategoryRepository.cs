@@ -13,7 +13,7 @@ namespace RealEstate_Dapper_Api.Repositories.CategoryRepository
             _context = context;
         }
 
-        public async void CreateCategory(CreateCategoryDto categoryDto)
+        public async Task CreateCategory(CreateCategoryDto categoryDto)
         {
             string query = "insert into Category(CategoryName,CategoryStatus) Values (@categoryName,@categoryStatus)";
             var paremeters = new DynamicParameters();
@@ -26,7 +26,7 @@ namespace RealEstate_Dapper_Api.Repositories.CategoryRepository
 
         }
 
-        public async void DeleteCategory(int id)
+        public async Task DeleteCategory(int id)
         {
             string query = "Delete From Category Where CategoryID=@categoryID";
             var paremeters = new DynamicParameters();
@@ -37,7 +37,7 @@ namespace RealEstate_Dapper_Api.Repositories.CategoryRepository
             }
         }
 
-        public async Task<List<ResultCategoryDto>> GetAllCategoryAsync()
+        public async Task<List<ResultCategoryDto>> GetAllCategory()
         {
             string query = "Select * From Category";
             using (var connection = _context.CreateConnection())
@@ -47,7 +47,7 @@ namespace RealEstate_Dapper_Api.Repositories.CategoryRepository
             }
         }
 
-        public async Task<GetByIdCategoryDto> GetByIdCategoryAsync(int id)
+        public async Task<GetByIdCategoryDto> GetByIdCategory(int id)
         {
             string query = "Select * From Category Where CategoryID=@categoryId";
             var param = new DynamicParameters();
@@ -60,7 +60,7 @@ namespace RealEstate_Dapper_Api.Repositories.CategoryRepository
             }
         }
 
-        public async void UpdateCategory(UpdateCategoryDto categoryDto)
+        public async Task UpdateCategory(UpdateCategoryDto categoryDto)
         {
             string query = "update Category Set CategoryName=@categoryName,CategoryStatus=@categoryStatus Where CategoryID=@categoryID";
             var paremeters = new DynamicParameters();
