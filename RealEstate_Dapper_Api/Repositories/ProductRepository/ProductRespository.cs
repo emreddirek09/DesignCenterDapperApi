@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.IdentityModel.Tokens;
 using RealEstate_Dapper_Api.Dtos.ProductDetailDtos;
 using RealEstate_Dapper_Api.Dtos.ProductDtos;
 using RealEstate_Dapper_Api.Models.DapperContext;
@@ -47,6 +48,17 @@ namespace RealEstate_Dapper_Api.Repositories.ProductRepository
             }
         }
 
+        public async Task<List<ResultLast3ProductWithCategoryDto>> GetLast3ProductAsync()
+        {
+            string query = @"Select top 3 ProductID,Title,Price,City,Disctrict,Description,CategoryName,CoverImage,Address,Type,DealOfTheDay,Date from Product 
+                               inner join Category on Product.ProductCategory=Category.CategoryID where DealOfTheDay=1 order by ProductID desc";
+            using (var con = _context.CreateConnection())
+            {
+                var values = await con.QueryAsync<ResultLast3ProductWithCategoryDto>(query);
+                return values.ToList();
+            }
+        }
+
         public async Task<List<ResultProductWithCategoryDto>> GetLast5ProductAsync()
         {
             string query = @"Select top 5 ProductID,Title,Price,City,Disctrict,CategoryName,CoverImage,Address,Type,DealOfTheDay,Date from Product 
@@ -82,6 +94,17 @@ namespace RealEstate_Dapper_Api.Repositories.ProductRepository
             using (var con = _context.CreateConnection())
             {
                 var values = await con.QueryAsync<ResultProductAdvertListWithCategoryByEmployeeDto>(query, paremeters);
+                return values.ToList();
+            }
+        }
+
+        public async Task<List<ResultProductWithCategoryDto>> GetProductByDealOfTheDayTrueWithCategoryDtoAsync()
+        {
+            string query = @"Select top 5 ProductID,Title,Price,City,Disctrict,CategoryName,CoverImage,Address,Type,DealOfTheDay,Date from Product 
+                               inner join Category on Product.ProductCategory=Category.CategoryID where DealOfTheDay=1 order by ProductID desc";
+            using (var con = _context.CreateConnection())
+            {
+                var values = await con.QueryAsync<ResultProductWithCategoryDto>(query);
                 return values.ToList();
             }
         }
@@ -147,6 +170,53 @@ namespace RealEstate_Dapper_Api.Repositories.ProductRepository
             using (var con = _context.CreateConnection())
             {
                 await con.ExecuteAsync(query, paremeters);
+            }
+        }
+
+        public async Task<List<ResultProductWithSearchListDto>> ResultProductWithSearchList(string? searchKeyValue, string? propertyCategoryId, string? city)
+        {
+         
+            string query = @$"select * from Product ";
+            if (!String.IsNullOrEmpty(searchKeyValue) || !String.IsNullOrEmpty(propertyCategoryId) || !String.IsNullOrEmpty(city))
+            {
+                query += " Where ";
+
+                if (!String.IsNullOrEmpty(searchKeyValue))
+                {
+                    query += $" Title like '%{searchKeyValue}%' ";
+
+                    if (!String.IsNullOrEmpty(propertyCategoryId))
+                    {
+                        query += $" and ProductCategory={propertyCategoryId} ";
+                    }
+                    if (!city.IsNullOrEmpty())
+                    {
+                        query += $" and City='{city}' ";
+                    }
+                }
+                else if (!String.IsNullOrEmpty(propertyCategoryId))
+                {
+
+                    query += $" ProductCategory={propertyCategoryId} ";
+
+                    if (!city.IsNullOrEmpty())
+                    {
+                        query += $" and City='{city}' ";
+                    }
+                }
+                else if (!String.IsNullOrEmpty(city))
+                {
+
+                    query += $" City='{city}' ";
+
+                }
+
+            }
+            var paremeters = new DynamicParameters();
+            using (var con = _context.CreateConnection())
+            {
+                var values = await con.QueryAsync<ResultProductWithSearchListDto>(query);
+                return values.ToList();
             }
         }
     }

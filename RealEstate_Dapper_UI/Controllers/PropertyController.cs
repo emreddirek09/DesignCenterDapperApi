@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using RealEstate_Dapper_UI.Dtos.ProductDetatilDtos;
 using RealEstate_Dapper_UI.Dtos.ProductDtos;
@@ -30,6 +31,64 @@ namespace RealEstate_Dapper_UI.Controllers
             return View();
         }
 
+        public async Task<IActionResult> PropertyListWithSearch(string? searchKeyValue, string? propertyCategoryId, string? city)
+        {
+            searchKeyValue = TempData["_search"].ToString();
+            propertyCategoryId = TempData["_category"].ToString();
+            city = TempData["_city"].ToString();
+
+            string query = "";
+
+            if (!String.IsNullOrEmpty(searchKeyValue) || !String.IsNullOrEmpty(propertyCategoryId) || !String.IsNullOrEmpty(city))
+            {
+                query += "?";
+
+                if (!String.IsNullOrEmpty(searchKeyValue))
+                {
+                    query += $"searchKeyValue={searchKeyValue}";
+
+                    if (!String.IsNullOrEmpty(propertyCategoryId))
+                    {
+                        query += $"&propertyCategoryId={propertyCategoryId}";
+                    }
+                    if (!city.IsNullOrEmpty())
+                    {
+                        query += $"&city={city}";
+                    }
+                }
+                else if (!String.IsNullOrEmpty(propertyCategoryId))
+                {
+
+                    query += $"propertyCategoryId={propertyCategoryId}";
+
+                    if (!city.IsNullOrEmpty())
+                    {
+                        query += $"&city={city}";
+                    }
+                }
+                else if (!String.IsNullOrEmpty(city))
+                {
+                    query += $"city={city}";
+                }
+
+            }
+
+            //https://localhost:44319/api/ProductControllers/ResultProductWithSearchList?searchKeyValue=Daire&propertyCategoryId=1&city=izmir
+
+
+            var client = _httpClientFactory.CreateClient();
+            var responeseMessage = await client.GetAsync(_baseUrl + "ProductControllers/ResultProductWithSearchList" + query);
+
+            if (responeseMessage.IsSuccessStatusCode)
+            {
+                var jsonData = await responeseMessage.Content.ReadAsStringAsync();
+                var values = JsonConvert.DeserializeObject<List<ResultProductWithSearchListDto>>(jsonData);
+                return View(values);
+            }
+            return View();
+
+        }
+
         [HttpGet]
         public async Task<IActionResult> PropertySingle(int id)
         {
@@ -47,8 +106,8 @@ namespace RealEstate_Dapper_UI.Controllers
             ViewBag.disctrict = values.disctrict;
             ViewBag.address = values.address;
             ViewBag.type = values.type;
-            ViewBag.description = values.description;            
-            ViewBag.Date = values.Date;            
+            ViewBag.description = values.description;
+            ViewBag.Date = values.Date;
             ViewBag.datediff = (values.Date.Month - System.DateTime.UtcNow.Month) == 0 ? 1 : values.Date.Month - System.DateTime.UtcNow.Month;
 
             ViewBag.productID = valuesProductDetail.productID;//

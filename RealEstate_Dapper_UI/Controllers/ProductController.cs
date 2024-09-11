@@ -54,7 +54,7 @@ namespace RealEstate_Dapper_UI.Controllers
             var client = _httpClientFactory.CreateClient();
             var response = await client.GetAsync(_baseUrl + $"ProductControllers/ProductDealOfTheDayStatusChangeToFalse/{id}");
             if (response.IsSuccessStatusCode)
-            { 
+            {
                 return RedirectToAction("Index");
             }
             return View();

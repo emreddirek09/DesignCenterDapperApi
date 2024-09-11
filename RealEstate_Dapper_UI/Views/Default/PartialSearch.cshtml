@@ -1,10 +1,4 @@
-﻿@model List<ResultCategoryDto>
-
-@{
-    ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_DefaultLayout.cshtml";
-}
-
+﻿
 <section class="w3l-cover-3">
     <div class="cover top-bottom">
         <div class="container">
@@ -12,27 +6,30 @@
                 <div class="section-width">
                     <p>Hayalinizdeki Eve Sahip Olun!</p>
                     <h2>Bugün Sizin İçin Doğru Evi Bulalım</h2>
-                   @*  <div class="most-searches">
+                    <div class="most-searches">
                         <h4>Most Searches</h4>
                         <ul>
                             <li><a href="#link">Villa</a></li>
                             <li><a href="#link">Daire</a></li>
                             <li><a href="#link">Yazlık</a></li>
                         </ul>
-                    </div> *@
+                    </div>
                     <form asp-action="PartialSearch" asp-controller="Default" class="w3l-cover-3-gd" method="POST">
-                        <input type="search" name="_search" placeholder="Anahtar kelime..." required>
+                        <input type="search" name="searchp" placeholder="Anahtar kelime..." required>
                         <span class="input-group-btn">
-                            <select class="btn btn-default" name="_category" required>
+                            <select class="btn btn-default" name="ext" required>
                                 <option selected="">Gayrimenkul</option>
-                                @foreach (var item in Model)
-                                {
-                                    <option value="@item.CategoryId">@item.CategoryName</option>
-                                }
+                                <option>Villa</option>
+                                <option>Apartment</option>
+                                <option>Private house</option>
+                                <option>Building</option>
+                                <option>Shop</option>
+                                <option>Social housing</option>
+                                <option>Town house</option>
                             </select>
                         </span>
                         <span class="input-group-btn">
-                            <select class="btn btn-default" name="_city" required>
+                            <select class="btn btn-default" name="ext" required>
                                 <option selected="">Şehir Seçiniz</option>
                                 <option>İstanbul</option>
                                 <option>Ankara</option>
@@ -53,14 +50,3 @@
         </div>
     </div>
 </section>
-
-@*@await Html.PartialAsync("~/Views/Default/PartialSearch.cshtml");*@
-@* @await Component.InvokeAsync("_DefaultFeatureComponentPartial")*@
-@await Component.InvokeAsync("_DefaultHomePageProductList")
-@await Component.InvokeAsync("_DefaultWhoWeAreComponentPartial")
-@await Component.InvokeAsync("_DefaultBottomGridComponentPartial")
-@await Component.InvokeAsync("_DefaultProductListExploreCitiesComponentPartial")
-@await Component.InvokeAsync("_DefaultOurTestimonialComponenetPartial")
-@await Component.InvokeAsync("_DefaultSubFeatureComponentPartial")
-@await Component.InvokeAsync("_DefaultDiscountOfDayComponentPartial")
-@await Component.InvokeAsync("_DefaultBrendComponentPartial")
