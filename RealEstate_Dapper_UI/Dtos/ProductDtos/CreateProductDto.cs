@@ -15,5 +15,7 @@
         public bool ProductStatus { get; set; }
         public int ProductCategory { get; set; }
         public int EmployeeID { get; set; }
+        public string SlugUrl { get; set; }
+
     }
 }

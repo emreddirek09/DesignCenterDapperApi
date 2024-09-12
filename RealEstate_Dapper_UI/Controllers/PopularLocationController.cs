@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RealEstate_Dapper_UI.Dtos.PopularLocationDtos;
+using RealEstate_Dapper_UI.Models;
+using RealEstate_Dapper_UI.Services;
 using System.Net.Http;
 using System.Text;
 
@@ -9,17 +12,22 @@ namespace RealEstate_Dapper_UI.Controllers
     public class PopularLocationController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILoginService _loginService;
+        private readonly ApiSettings _settings;
 
-        private string _baseUrl = "https://localhost:44319/api/";
-
-        public PopularLocationController(IHttpClientFactory httpClientFactory)
+        public PopularLocationController(IHttpClientFactory httpClientFactory, ILoginService loginService, IOptions<ApiSettings> settings)
         {
             _httpClientFactory = httpClientFactory;
+            _loginService = loginService;
+            _settings = settings.Value;
         }
+
         public async Task<IActionResult> Index()
         {
             var client = _httpClientFactory.CreateClient();
-            var responeseMessage = await client.GetAsync(_baseUrl + "PopularLocations");
+            client.BaseAddress = new Uri(_settings.BaseUrl);
+
+            var responeseMessage = await client.GetAsync("PopularLocations");
 
             if (responeseMessage.IsSuccessStatusCode)
             {
@@ -38,9 +46,11 @@ namespace RealEstate_Dapper_UI.Controllers
         public async Task<IActionResult> CreatePopularLocation(CreatePopularLocationDto PopularLocationDto)
         {
             var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(_settings.BaseUrl);
+
             var jasonData = JsonConvert.SerializeObject(PopularLocationDto);
             StringContent stringContent = new StringContent(jasonData, Encoding.UTF8, "application/json");
-            var responseMessage = await client.PostAsync(_baseUrl + "PopularLocations", stringContent);
+            var responseMessage = await client.PostAsync("PopularLocations", stringContent);
             if (responseMessage.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index");
@@ -53,7 +63,9 @@ namespace RealEstate_Dapper_UI.Controllers
         public async Task<IActionResult> DeletePopularLocation(int id)
         {
             var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.DeleteAsync(_baseUrl + "PopularLocations/" + id);
+            client.BaseAddress = new Uri(_settings.BaseUrl);
+
+            var responseMessage = await client.DeleteAsync("PopularLocations/" + id);
             if (responseMessage.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index");
@@ -65,7 +77,9 @@ namespace RealEstate_Dapper_UI.Controllers
         public async Task<IActionResult> UpdatePopularLocation(int id)
         {
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync(_baseUrl + "PopularLocations/" + id);
+            client.BaseAddress = new Uri(_settings.BaseUrl);
+
+            var response = await client.GetAsync("PopularLocations/" + id);
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
@@ -79,9 +93,11 @@ namespace RealEstate_Dapper_UI.Controllers
         public async Task<IActionResult> UpdatePopularLocation(UpdatePopularLocationDto updatePopularLocationDto)
         {
             var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(_settings.BaseUrl);
+
             var json = JsonConvert.SerializeObject(updatePopularLocationDto);
             StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await client.PutAsync(_baseUrl + "PopularLocations", content);
+            var response = await client.PutAsync("PopularLocations", content);
             if (response.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index");

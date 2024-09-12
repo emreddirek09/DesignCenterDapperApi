@@ -1,24 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RealEstate_Dapper_UI.Dtos.AppUserDtos;
 using RealEstate_Dapper_UI.Dtos.PropertyImageDtos;
+using RealEstate_Dapper_UI.Models;
+using RealEstate_Dapper_UI.Services;
 
 namespace RealEstate_Dapper_UI.ViewComponents.PropertySingle
 {
     public class _PropertyAppUserComponentPartial:ViewComponent
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILoginService _loginService;
+        private readonly ApiSettings _settings;
 
-        public _PropertyAppUserComponentPartial(IHttpClientFactory httpClientFactory)
+        public _PropertyAppUserComponentPartial(IHttpClientFactory httpClientFactory, ILoginService loginService, IOptions<ApiSettings> settings)
         {
             _httpClientFactory = httpClientFactory;
+            _loginService = loginService;
+            _settings = settings.Value;
         }
-        private string _baseUrl = @"https://localhost:44319/api/";
+
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            int id = 1;
+            var userid = _loginService.GetUserId;
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync(_baseUrl + $"AppUsers?id={id}");
+            client.BaseAddress = new Uri(_settings.BaseUrl);
+
+            var response = await client.GetAsync($"AppUsers?id={userid}");
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();

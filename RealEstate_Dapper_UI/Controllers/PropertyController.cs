@@ -1,25 +1,32 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using RealEstate_Dapper_UI.Dtos.ProductDetatilDtos;
 using RealEstate_Dapper_UI.Dtos.ProductDtos;
+using RealEstate_Dapper_UI.Models;
+using RealEstate_Dapper_UI.Services;
 
 namespace RealEstate_Dapper_UI.Controllers
 {
     public class PropertyController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILoginService _loginService;
+        private readonly ApiSettings _settings;
 
-        public PropertyController(IHttpClientFactory httpClientFactory)
+        public PropertyController(IHttpClientFactory httpClientFactory, ILoginService loginService, IOptions<ApiSettings> settings)
         {
             _httpClientFactory = httpClientFactory;
+            _loginService = loginService;
+            _settings = settings.Value;
         }
-
-        private string _baseUrl = $"https://localhost:44319/api/";
         public async Task<IActionResult> Index()
         {
             var client = _httpClientFactory.CreateClient();
-            var responeseMessage = await client.GetAsync(_baseUrl + "ProductControllers/ProductListWithCategory");
+            client.BaseAddress = new Uri(_settings.BaseUrl);
+
+            var responeseMessage = await client.GetAsync("ProductControllers/ProductListWithCategory");
 
             if (responeseMessage.IsSuccessStatusCode)
             {
@@ -77,7 +84,9 @@ namespace RealEstate_Dapper_UI.Controllers
 
 
             var client = _httpClientFactory.CreateClient();
-            var responeseMessage = await client.GetAsync(_baseUrl + "ProductControllers/ResultProductWithSearchList" + query);
+            client.BaseAddress = new Uri(_settings.BaseUrl);
+
+            var responeseMessage = await client.GetAsync("ProductControllers/ResultProductWithSearchList" + query);
 
             if (responeseMessage.IsSuccessStatusCode)
             {
@@ -89,13 +98,16 @@ namespace RealEstate_Dapper_UI.Controllers
 
         }
 
-        [HttpGet]
-        public async Task<IActionResult> PropertySingle(int id)
+        [HttpGet("Property/{slug}/{id}")]
+        public async Task<IActionResult> PropertySingle(string _slug, int id)
         {
-            id = 1;
+            ViewBag.idd = id;
+
             var client = _httpClientFactory.CreateClient();
-            var responeseMessage = await client.GetAsync(_baseUrl + $"ProductControllers/GetProductByProductId/{id}");
-            var responseProductDetail = await client.GetAsync(_baseUrl + $"ProductDetails/GetProductDetailsByProductId/{id}");
+            client.BaseAddress = new Uri(_settings.BaseUrl);
+
+            var responeseMessage = await client.GetAsync($"ProductControllers/GetProductByProductId/{id}");
+            var responseProductDetail = await client.GetAsync($"ProductDetails/GetProductDetailsByProductId/{id}");
             var jsonData = await responeseMessage.Content.ReadAsStringAsync();
             var jsonDataProductDetail = await responseProductDetail.Content.ReadAsStringAsync();
             var values = JsonConvert.DeserializeObject<ResultProductDto>(jsonData);
@@ -108,19 +120,41 @@ namespace RealEstate_Dapper_UI.Controllers
             ViewBag.type = values.type;
             ViewBag.description = values.description;
             ViewBag.Date = values.Date;
+
             ViewBag.datediff = (values.Date.Month - System.DateTime.UtcNow.Month) == 0 ? 1 : values.Date.Month - System.DateTime.UtcNow.Month;
 
-            ViewBag.productID = valuesProductDetail.productID;//
-            ViewBag.bathCount = valuesProductDetail.bathCount;//
-            ViewBag.roomCount = valuesProductDetail.roomCount;
-            ViewBag.bedRoomCount = valuesProductDetail.bedRoomCount;//
-            ViewBag.buildYear = valuesProductDetail.buildYear;//
-            ViewBag.garageSize = valuesProductDetail.garageSize;//
-            ViewBag.location = valuesProductDetail.location;
-            ViewBag.price = valuesProductDetail.price;
-            ViewBag.productSize = valuesProductDetail.productSize;
-            ViewBag.videoUrl = valuesProductDetail.videoUrl;
+            if (valuesProductDetail != null)
+            {
+                ViewBag.productID = valuesProductDetail.productID;//
+                ViewBag.bathCount = valuesProductDetail.bathCount;//
+                ViewBag.roomCount = valuesProductDetail.roomCount;
+                ViewBag.bedRoomCount = valuesProductDetail.bedRoomCount;//
+                ViewBag.buildYear = valuesProductDetail.buildYear;//
+                ViewBag.garageSize = valuesProductDetail.garageSize;//
+                ViewBag.location = valuesProductDetail.location;
+                ViewBag.price = valuesProductDetail.price;
+                ViewBag.productSize = valuesProductDetail.productSize;
+                ViewBag.videoUrl = valuesProductDetail.videoUrl;
+            }
+
+
+            string slugFromTitle = CreateSlug(values.title);
+            ViewBag.SlugUrl = slugFromTitle;
+
+
             return View();
+        }
+
+
+        private string CreateSlug(string title)
+        {
+            title = title.ToLowerInvariant(); // Küçük harfe çevir
+            title = title.Replace(" ", "-"); // Boşlukları tire ile değiştir
+            title = System.Text.RegularExpressions.Regex.Replace(title, @"[^a-z0-9\s-]", ""); // Geçersiz karakterleri kaldır
+            title = System.Text.RegularExpressions.Regex.Replace(title, @"\s+", " ").Trim(); // Birden fazla boşluğu tek boşluğa indir ve kenar boşluklarını kaldır
+            title = System.Text.RegularExpressions.Regex.Replace(title, @"\s", "-"); // Boşlukları tire ile değiştir
+
+            return title;
         }
     }
 }

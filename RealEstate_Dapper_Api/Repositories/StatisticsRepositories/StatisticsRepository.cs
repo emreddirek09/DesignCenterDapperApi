@@ -119,7 +119,7 @@ Group by City order by product_count desc";
         {
             string query = @"select top(1) Name,COUNT(*) as product_count from Product
                             inner join Employee 
-                            On Product.EmployeeID = Employee.EmployeeID
+                            On Product.AppUserId = Employee.EmployeeID
                             group by Name order by product_count desc";
             using (var connection = _context.CreateConnection())
             {

@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using NuGet.Common;
 using RealEstate_Dapper_UI.Dtos.LoginDtos;
 using RealEstate_Dapper_UI.Models;
+using RealEstate_Dapper_UI.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -14,13 +16,15 @@ namespace RealEstate_Dapper_UI.Controllers
     public class LoginController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILoginService _loginService;
+        private readonly ApiSettings _settings;
 
-        public LoginController(IHttpClientFactory httpClientFactory)
+        public LoginController(IHttpClientFactory httpClientFactory, ILoginService loginService, IOptions<ApiSettings> settings)
         {
             _httpClientFactory = httpClientFactory;
+            _loginService = loginService;
+            _settings = settings.Value;
         }
-
-        private string _baseUrl = @"https://localhost:44319/api/";
 
         [HttpGet]
         public IActionResult Index()
@@ -31,8 +35,10 @@ namespace RealEstate_Dapper_UI.Controllers
         public async Task<IActionResult> Index(CreateLoginDtos createLoginDtos)
         {
             var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(_settings.BaseUrl);
+
             var con = new StringContent(JsonSerializer.Serialize(createLoginDtos), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(_baseUrl + "Login", con);
+            var response = await client.PostAsync("Login", con);
 
             if (response.IsSuccessStatusCode)
             {

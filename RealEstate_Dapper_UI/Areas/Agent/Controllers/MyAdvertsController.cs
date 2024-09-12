@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RealEstate_Dapper_UI.Dtos.CategoryDtos;
 using RealEstate_Dapper_UI.Dtos.ProductDtos;
+using RealEstate_Dapper_UI.Models;
 using RealEstate_Dapper_UI.Services;
 using System.Text;
 
@@ -13,21 +15,24 @@ namespace RealEstate_Dapper_UI.Areas.Agent.Controllers
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILoginService _loginService;
+        private readonly ApiSettings _settings;
 
-        private readonly string _baseUrl = @"https://localhost:44319/api/";
-
-        public MyAdvertsController(IHttpClientFactory httpClientFactory, ILoginService loginService)
+        public MyAdvertsController(IHttpClientFactory httpClientFactory, ILoginService loginService, IOptions<ApiSettings> settings)
         {
             _httpClientFactory = httpClientFactory;
             _loginService = loginService;
+            _settings = settings.Value;
         }
 
+         
         public async Task<IActionResult> ActiveAdverts()
         {
             var id = _loginService.GetUserId;
 
             var client = _httpClientFactory.CreateClient();
-            var responeseMessage = await client.GetAsync(_baseUrl + $"ProductControllers/ProductAdvertsListByEmployeeByTrue/{id}");
+            client.BaseAddress = new Uri(_settings.BaseUrl);
+
+            var responeseMessage = await client.GetAsync($"ProductControllers/ProductAdvertsListByEmployeeByTrue/{id}");
 
             if (responeseMessage.IsSuccessStatusCode)
             {
@@ -43,7 +48,9 @@ namespace RealEstate_Dapper_UI.Areas.Agent.Controllers
             var id = _loginService.GetUserId;
 
             var client = _httpClientFactory.CreateClient();
-            var responeseMessage = await client.GetAsync(_baseUrl + $"ProductControllers/ProductAdvertsListByEmployeeByFalse/{id}");
+            client.BaseAddress = new Uri(_settings.BaseUrl);
+
+            var responeseMessage = await client.GetAsync($"ProductControllers/ProductAdvertsListByEmployeeByFalse/{id}");
 
             if (responeseMessage.IsSuccessStatusCode)
             {
@@ -59,7 +66,7 @@ namespace RealEstate_Dapper_UI.Areas.Agent.Controllers
         public async Task<IActionResult> CreateAdvert()
         {
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync(_baseUrl + "Categories");
+            var response = await client.GetAsync("Categories");
 
             var json = await response.Content.ReadAsStringAsync();
             var values = JsonConvert.DeserializeObject<List<ResultCategoryDto>>(json);
@@ -86,7 +93,7 @@ namespace RealEstate_Dapper_UI.Areas.Agent.Controllers
             var client = _httpClientFactory.CreateClient();
             var jasonData = JsonConvert.SerializeObject(createProductDto);
             StringContent stringContent = new StringContent(jasonData, Encoding.UTF8, "application/json");
-            var responseMessage = await client.PostAsync(_baseUrl + "ProductControllers", stringContent);
+            var responseMessage = await client.PostAsync("ProductControllers", stringContent);
             if (responseMessage.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index");

@@ -1,23 +1,30 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RealEstate_Dapper_UI.Dtos.CategoryDtos;
+using RealEstate_Dapper_UI.Models;
+using RealEstate_Dapper_UI.Services;
 
 namespace RealEstate_Dapper_UI.Controllers
 {
     public class DefaultController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILoginService _loginService;
+        private readonly ApiSettings _settings;
 
-        public DefaultController(IHttpClientFactory httpClientFactory)
+        public DefaultController(IHttpClientFactory httpClientFactory, ILoginService loginService, IOptions<ApiSettings> settings)
         {
             _httpClientFactory = httpClientFactory;
+            _loginService = loginService;
+            _settings = settings.Value;
         }
-        private string _baseUrl = @"https://localhost:44319/api/";
 
         public async Task<IActionResult> Index()
         {
             var client = _httpClientFactory.CreateClient();
-            var responeseMessage = await client.GetAsync(_baseUrl + "Categories");
+            client.BaseAddress = new Uri(_settings.BaseUrl);
+            var responeseMessage = await client.GetAsync("Categories");
 
             if (responeseMessage.IsSuccessStatusCode)
             {

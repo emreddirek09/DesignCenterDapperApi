@@ -13,5 +13,7 @@
         public string Type { get; set; }
         public bool DealOfTheDay { get; set; }
         public DateTime Date { get; set; }
+        public string SlugUrl { get; set; }
+
     }
 }

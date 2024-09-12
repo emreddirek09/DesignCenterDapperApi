@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RealEstate_Dapper_UI.Dtos.BottomGridDtos;
+using RealEstate_Dapper_UI.Models;
+using RealEstate_Dapper_UI.Services;
 using System.Text;
 
 namespace RealEstate_Dapper_UI.Controllers
@@ -8,18 +11,20 @@ namespace RealEstate_Dapper_UI.Controllers
     public class BottomGridController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILoginService _loginService;
+        private readonly ApiSettings _settings;
 
-        private string _baseUrl = "https://localhost:44319/api/";
-
-        public BottomGridController(IHttpClientFactory httpClientFactory)
+        public BottomGridController(IHttpClientFactory httpClientFactory, ILoginService loginService, IOptions<ApiSettings> settings)
         {
             _httpClientFactory = httpClientFactory;
+            _loginService = loginService;
+            _settings = settings.Value;
         }
-
         public async Task<IActionResult> Index()
         {
             var client = _httpClientFactory.CreateClient();
-            var responeseMessage = await client.GetAsync(_baseUrl + "BottomGrids");
+            client.BaseAddress = new Uri(_settings.BaseUrl);
+            var responeseMessage = await client.GetAsync("BottomGrids");
 
             if (responeseMessage.IsSuccessStatusCode)
             {
@@ -38,9 +43,10 @@ namespace RealEstate_Dapper_UI.Controllers
         public async Task<IActionResult> CreateBottomGrid(CreateBottomGridDto createBottomGridDto)
         { 
             var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(_settings.BaseUrl);
             var jasonData = JsonConvert.SerializeObject(createBottomGridDto);
             StringContent stringContent = new StringContent(jasonData, Encoding.UTF8, "application/json");
-            var responseMessage = await client.PostAsync(_baseUrl + "BottomGrids", stringContent);
+            var responseMessage = await client.PostAsync("BottomGrids", stringContent);
             if (responseMessage.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index");
@@ -53,7 +59,8 @@ namespace RealEstate_Dapper_UI.Controllers
         public async Task<IActionResult> DeleteBottomGrid(int id)
         {
             var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.DeleteAsync(_baseUrl + "BottomGrids/" + id);
+            client.BaseAddress = new Uri(_settings.BaseUrl);
+            var responseMessage = await client.DeleteAsync("BottomGrids/" + id);
             if (responseMessage.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index");
@@ -65,7 +72,8 @@ namespace RealEstate_Dapper_UI.Controllers
         public async Task<IActionResult> UpdateBottomGrid(int id)
         {
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync(_baseUrl + "BottomGrids/" + id);
+            client.BaseAddress = new Uri(_settings.BaseUrl);
+            var response = await client.GetAsync("BottomGrids/" + id);
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
@@ -79,9 +87,10 @@ namespace RealEstate_Dapper_UI.Controllers
         public async Task<IActionResult> UpdateBottomGrid(UpdateBottomGridDto updateBottomGridDto)
         {
             var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(_settings.BaseUrl);
             var json = JsonConvert.SerializeObject(updateBottomGridDto);
             StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await client.PutAsync(_baseUrl + "BottomGrids", content);
+            var response = await client.PutAsync("BottomGrids", content);
             if (response.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index");

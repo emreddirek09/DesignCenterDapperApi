@@ -7,5 +7,7 @@
         public string City { get; set; }
         public string Disctrict { get; set; }
         public int ProductCategory { get; set; }
+        public string SlugUrl { get; set; }
+
     }
 }

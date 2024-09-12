@@ -11,5 +11,7 @@
         public string categoryName { get; set; }
         public string coverImage { get; set; }
         public string type { get; set; }
+        public string SlugUrl { get; set; }
+
     }
 }

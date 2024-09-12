@@ -10,8 +10,8 @@
         <div class="container">
             <div class="middle-section text-center">
                 <div class="section-width">
-                    <p>Hayalinizdeki Eve Sahip Olun!</p>
-                    <h2>Bugün Sizin İçin Doğru Evi Bulalım</h2>
+                    <p>Hayalinizdeki Aksesuara Sahip Olun!</p>
+                    <h2>Bugün Sizin İçin Doğru Aksesuarı Bulalım</h2>
                    @*  <div class="most-searches">
                         <h4>Most Searches</h4>
                         <ul>
@@ -24,7 +24,7 @@
                         <input type="search" name="_search" placeholder="Anahtar kelime..." required>
                         <span class="input-group-btn">
                             <select class="btn btn-default" name="_category" required>
-                                <option selected="">Gayrimenkul</option>
+                                <option selected="">Tasarım</option>
                                 @foreach (var item in Model)
                                 {
                                     <option value="@item.CategoryId">@item.CategoryName</option>
@@ -33,14 +33,9 @@
                         </span>
                         <span class="input-group-btn">
                             <select class="btn btn-default" name="_city" required>
-                                <option selected="">Şehir Seçiniz</option>
-                                <option>İstanbul</option>
-                                <option>Ankara</option>
-                                <option>İzmir</option>
-                                <option>Bursa</option>
-                                <option>Aydın</option>
-                                <option>Manisa</option>
-                                <option>Muğla</option>
+                                <option selected="">Cinsiyet</option>
+                                <option>Kadın</option>
+                                <option>Erkek</option> 
                             </select>
                         </span>
                         <button type="submit" class="btn-primary">Ara</button>
@@ -53,9 +48,7 @@
         </div>
     </div>
 </section>
-
-@*@await Html.PartialAsync("~/Views/Default/PartialSearch.cshtml");*@
-@* @await Component.InvokeAsync("_DefaultFeatureComponentPartial")*@
+ 
 @await Component.InvokeAsync("_DefaultHomePageProductList")
 @await Component.InvokeAsync("_DefaultWhoWeAreComponentPartial")
 @await Component.InvokeAsync("_DefaultBottomGridComponentPartial")
